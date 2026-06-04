@@ -1,7 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run Tests" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run Tests" type="GradleRunConfiguration" factoryName="Gradle" folderName="Run">
     <log_file alias="IDE logs" path="$PROJECT_DIR$/.intellijPlatform/sandbox/*/*/log-test/idea.log" show_all="true" />
     <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="API_KEY" value="sk-8caMbOHptZM0qc0wlJyYbIIS17kD5jWjFlvZpUgAosZR5JMe" />
+          <entry key="BASE_URL" value="http://new-api.clizard.team" />
+        </map>
+      </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
@@ -18,8 +24,11 @@
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>true</RunAsTest>
+    <GradleProfilingDisabled>false</GradleProfilingDisabled>
+    <GradleCoverageDisabled>false</GradleCoverageDisabled>
     <method v="2" />
   </configuration>
 </component>

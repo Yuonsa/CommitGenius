@@ -1,19 +1,86 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
-<idea-plugin>
+<idea-plugin require-restart="false">
     <id>com.github.yuonsa.commitgenius</id>
     <name>CommitGenius</name>
     <vendor>yuonsa</vendor>
-    <description><![CDATA[
-        <p><b>CommitGenius</b> is a repository that provides a pure template to make it easier to create a new plugin project.</p>
-        <p>The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.</p>
-    ]]></description>
+    <description>
+        <![CDATA[
+        <p><b>CommitGenius</b> is an intelligent, context-aware Git commit message generator for IntelliJ IDEA. It
+            streamlines your version control workflow by automatically turning code changes into meaningful,
+            standardized commit messages using AI.</p>
+
+        <p><b>CommitGenius</b> 是一款专为 IntelliJ 平台打造的智能 Git 提交日志生成助手。它通过深入理解代码改动上下文，自动将错综复杂的
+            Diff 转化为清晰、规范的 Commit Message，彻底解放你的双手。</p>
+
+        <h3>✨ Core Features / 核心特性</h3>
+        <ul>
+            <li><b>Dual-Engine Power (双模驱动)</b>: Supports standard HTTP APIs (OpenAI, DeepSeek, etc.) and the
+                next-gen <b>Agent Client Protocol (ACP)</b> to reuse your local CLI agents (Claude Code, Kimi-CLI). /
+                同时支持标准大模型 API 与下一代 ACP 智能体协议，无感复用本地本地 CLI 环境。
+            </li>
+            <li><b>Context-Aware Diff Analysis (上下文感知)</b>: Smartly filters heavy dependency locks (e.g.,
+                node_modules, lockfiles) and only sends meaningful code snippets to optimize token usage. /
+                智能过滤依赖锁文件和大文件，只比对核心源码差异，节省 Token 消耗。
+            </li>
+            <li><b>Conventional Commits</b>: Generates neatly structured messages following industry standards (e.g.,
+                <code>feat:</code>, <code>fix:</code>, <code>docs:</code>). / 严格遵循行业标准的结构化提交规范。
+            </li>
+            <li><b>Seamless Integration (无缝集成)</b>: Adds a native "AI Commit" button directly inside your IDE's
+                Commit tool window. / 深度融入 IDE 原生 Git 提交窗口，一键触达。
+            </li>
+        </ul>
+
+        <h3>🚀 Quick Start / 快速开始</h3>
+        <ol>
+            <li>Open the <b>Commit Window</b> (Ctrl+K or Cmd+K).</li>
+            <li>Click the <b>CommitGenius</b> gear icon to configure your API Key or local <code>acp.json</code> path.
+            </li>
+            <li>Stage your changes, click the "AI Commit" button, and watch the magic happen!</li>
+        </ol>
+        ]]>
+    </description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.idea</depends>
+    <depends>com.intellij.modules.vcs</depends>
+    <depends>Git4Idea</depends>
+    <depends>org.intellij.plugins.markdown</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <resource-bundle>messages.AppBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.yuonsa.commitgenius.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.yuonsa.commitgenius.startup.MyProjectActivity" />
+        <postStartupActivity implementation="com.github.yuonsa.commitgenius.startup.WelComeActivity"/>
+
+        <notificationGroup displayType="BALLOON" id="com.github.yuonsa.commitgenius.notificationGroup"
+                           bundle="messages.NotificationBundle"
+                           key="notification.group.name"/>
+
+        <applicationService
+                serviceImplementation="com.github.yuonsa.commitgenius.services.AppPersistentStateComponent"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.github.yuonsa.commitgenius.settings.ApplicationConfigurable"
+                id="com.github.yuonsa.commitgenius.settings.ApplicationConfigurable"
+                bundle="messages.AppBundle"
+                key="configurable.name.app"/>
+
+        <projectService
+                serviceImplementation="com.github.yuonsa.commitgenius.services.ProjectPersistentStateComponent"/>
+        <projectConfigurable
+                parentId="tools"
+                instance="com.github.yuonsa.commitgenius.settings.ProjectConfigurable"
+                id="com.github.yuonsa.commitgenius.settings.ProjectConfigurable"
+                bundle="messages.AppBundle"
+                key="configurable.name.project"/>
     </extensions>
+
+    <actions>
+        <!-- 注册 AI Commit 按钮到 Commit 窗口 -->
+        <action id="com.github.yuonsa.commitgenius.actions.GenerateCommitAction"
+                class="com.github.yuonsa.commitgenius.actions.GenerateCommitAction"
+                icon="AllIcons.Actions.Lightning">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
