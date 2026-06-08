@@ -1,45 +1,59 @@
 # CommitGenius
 
 ![Build](https://github.com/Yuonsa/CommitGenius/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)][plugin]
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)][plugin]
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [group](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml), [name](./src/main/resources/META-INF/plugin.xml), and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin [description](./src/main/resources/META-INF/plugin.xml) (see [Tips][docs:plugin-description]) and this README to describe what your plugin does.
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
+## Overview
 
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+**CommitGenius** is an intelligent, context-aware Git commit message generator for IntelliJ IDEA. It streamlines your
+version control workflow by automatically turning code changes into meaningful, standardized commit messages using AI.
+**CommitGenius** 是一款专为 IntelliJ 平台打造的智能 Git 提交日志生成助手。它通过深入理解代码改动上下文，自动将错综复杂的
+Diff 转化为清晰、规范的 Commit Message。
+
+## Features
+
+- **AI-Powered Generation** — Generates structured commit messages
+  following [Conventional Commits][conventionalcommits] standards
+  AI 驱动，自动生成符合结构化提交规范的 Commit Message
+- **Multi-Model Support** — Supports OpenAI, Anthropic, and other models with customizable API endpoints
+  支持 OpenAI、Anthropic 等多模型，可自定义 API 地址
+- **Row-Level Partial Commit** — Only analyzes actually selected code changes for precise commit messages
+  支持行级勾选提交，只分析实际选中的代码改动
+- **Output Templates** — Lite / Std / Ultra / Custom, four templates to suit different needs
+  四种输出模板（Lite/Std/Ultra/Custom），满足不同场景需求
+- **Dual-Layer Configuration** — Global settings with per-project override support
+  全局配置与项目级配置分离，灵活适配多项目场景
+- **Smart Token Optimization** — Intelligent dependency lockfile filtering to minimize token consumption
+  智能过滤依赖锁文件，自动优化 Token 消耗
 
 ## Installation
 
-- Using the IDE built-in plugin system:
-
+- **From JetBrains Marketplace:**
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "CommitGenius"</kbd> >
   <kbd>Install</kbd>
-
-- Using JetBrains Marketplace:
-
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
-
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
+- **From Disk (Manual):**
+  Download the [latest release][last-release] and install it using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
-- Manually:
+## Quick Start
 
-  Download the [latest release](https://github.com/Yuonsa/CommitGenius/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+1. Open the **Commit Window** (<kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>)
+2. Click the **CommitGenius** gear icon ⚙️ to configure your API Key and model settings
+3. Stage your changes, click the lightning icon ⚡, and watch the commit message generate
 
+## Feedback & Contribution
+
+- Report issues: [GitHub Issues](https://github.com/Yuonsa/CommitGenius/issues)
+- Source code: [GitHub Repository](https://github.com/Yuonsa/CommitGenius)
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+
+[plugin]: https://plugins.jetbrains.com/plugin/32165-commitgenius
+
+[conventionalcommits]: https://www.conventionalcommits.org/
+
+[last-release]: https://github.com/Yuonsa/CommitGenius/releases/latest
