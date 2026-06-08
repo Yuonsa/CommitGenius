@@ -37,8 +37,12 @@ class GenerateCommitAction : AnAction({ AppBundle["ui.action.GenerateCommitActio
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-
         val commitWorkflow = e.getData(VcsDataKeys.COMMIT_WORKFLOW_UI) ?: return
+
+        if (!LLMEngine.verifySettings(project)) {
+            return
+        }
+
         val includedChanges = commitWorkflow.getIncludedChanges()
         val includedUnversionedFiles = commitWorkflow.getIncludedUnversionedFiles()
 

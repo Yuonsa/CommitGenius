@@ -1,5 +1,6 @@
 package com.github.yuonsa.commitgenius.core.agent
 
+import ai.koog.http.client.KoogHttpClient
 import ai.koog.http.client.ktor.KtorKoogHttpClient
 import ai.koog.prompt.Prompt
 import ai.koog.prompt.executor.clients.LLMClient
@@ -8,11 +9,19 @@ import ai.koog.prompt.executor.clients.anthropic.AnthropicLLMClient
 import ai.koog.prompt.executor.clients.openai.OpenAIClientSettings
 import ai.koog.prompt.executor.clients.openai.OpenAILLMClient
 import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
+import ai.koog.prompt.executor.ollama.client.OllamaClient
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import ai.koog.prompt.streaming.StreamFrame
+import com.github.yuonsa.commitgenius.NotificationBundle
+import com.github.yuonsa.commitgenius.core.notification.Notifier
+import com.github.yuonsa.commitgenius.settings.ApplicationConfigurable
 import com.github.yuonsa.commitgenius.settings.state.EffectiveSettings
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.flow.collectIndexed
 import kotlin.time.DurationUnit
@@ -26,6 +35,44 @@ import kotlin.time.toDuration
  * @since 2026/05/29
  */
 object LLMEngine {
+
+    @Suppress("UnstableApiUsage")
+    private val clientBuilders: Map<LLMProvider, LLMClientBuilder> = mapOf(
+        LLMProvider.OpenAI to LLMClientBuilder { apiKey, baseUrl, factory ->
+            OpenAILLMClient(
+                apiKey = apiKey,
+                settings = OpenAIClientSettings(
+                    baseUrl = baseUrl.ifBlank { OpenAIClientSettings().baseUrl }
+                ),
+                httpClientFactory = factory
+            )
+        },
+        LLMProvider.Anthropic to LLMClientBuilder { apiKey, baseUrl, factory ->
+            AnthropicLLMClient(
+                apiKey = apiKey,
+                settings = AnthropicClientSettings(
+                    baseUrl = baseUrl.ifBlank { AnthropicClientSettings().baseUrl },
+                    modelVersionsMap = object : HashMap<LLModel, String>() {
+                        override fun get(key: LLModel): String = key.id
+                    }
+                ),
+                httpClientFactory = factory
+            )
+        },
+        LLMProvider.Ollama to LLMClientBuilder { apiKey, baseUrl, factory ->
+            OllamaClient(
+                baseUrl = baseUrl.ifBlank { OllamaClient.DEFAULT_BASE_URL },
+                httpClientFactory = factory,
+                headers = if (apiKey.isNotBlank()) {
+                    mapOf("Authorization" to "Bearer $apiKey")
+                } else {
+                    emptyMap()
+                }
+            )
+        }
+    )
+
+    fun supportedProviders(): Set<LLMProvider> = clientBuilders.keys
 
     suspend fun executeStreaming(
         project: Project? = null,
@@ -110,38 +157,66 @@ object LLMEngine {
         return buildInternal(state.provider, state.apiKey, state.baseUrl)
     }
 
+    fun verifySettings(project: Project? = null): Boolean {
+        val state = EffectiveSettings.resolve(project)
+
+        if (state.provider.verifyApiKey(state.apiKey)) {
+            Notifier.notifyText(
+                NotificationBundle["providers.empty.api-key"],
+                "",
+                NotificationType.ERROR,
+                project
+            ) {
+                val action = object : AnAction(NotificationBundle["notification.actions.open-setting"]) {
+                    override fun actionPerformed(e: AnActionEvent) {
+                        expire()
+
+                        ShowSettingsUtil.getInstance()
+                            .showSettingsDialog(project, ApplicationConfigurable::class.java)
+                    }
+                }
+                addAction(action)
+            }
+            return false
+        }
+
+        return true
+    }
+
     private fun buildInternal(provider: LLMProvider, apiKey: String, baseUrl: String? = null) =
         MultiLLMPromptExecutor(provider to buildClientInternal(provider, apiKey, baseUrl))
 
-    @Suppress("UnstableApiUsage")
     private fun buildClientInternal(
         provider: LLMProvider,
         apiKey: String,
         baseUrl: String? = null
     ): LLMClient {
-        val factory = KtorKoogHttpClient.Factory()
-        val effectiveBaseUrl = baseUrl ?: ""
-        return when (provider) {
-            LLMProvider.OpenAI -> OpenAILLMClient(
-                apiKey = apiKey,
-                settings = OpenAIClientSettings(
-                    baseUrl = effectiveBaseUrl.ifBlank { OpenAIClientSettings().baseUrl }
-                ),
-                httpClientFactory = factory
-            )
+        @Suppress("UnstableApiUsage")
+        return clientBuilders[provider]?.build(apiKey, baseUrl ?: "", KtorKoogHttpClient.Factory())
+               ?: throw UnsupportedOperationException("Unsupported provider: ${provider.display}")
+    }
 
-            LLMProvider.Anthropic -> AnthropicLLMClient(
-                apiKey = apiKey,
-                settings = AnthropicClientSettings(
-                    baseUrl = effectiveBaseUrl.ifBlank { AnthropicClientSettings().baseUrl },
-                    modelVersionsMap = object : HashMap<LLModel, String>() {
-                        override fun get(key: LLModel): String = key.id
-                    }
-                ),
-                httpClientFactory = factory
-            )
+    fun interface LLMClientBuilder {
 
-            else -> throw UnsupportedOperationException("Unsupported provider: $provider")
+        /**
+         * Build LLM client.
+         *
+         * @param apiKey api key
+         * @param baseUrl base url
+         * @return LLM client
+         */
+        fun build(
+            apiKey: String,
+            baseUrl: String,
+            @Suppress("UnstableApiUsage") factory: KoogHttpClient.Factory
+        ): LLMClient
+    }
+
+    private fun LLMProvider.verifyApiKey(apiKey: String? = null): Boolean {
+        if (apiKey.isNullOrBlank()) {
+            // 非 Ollama 时，apiKey不能为空
+            return this == LLMProvider.Ollama
         }
+        return true
     }
 }

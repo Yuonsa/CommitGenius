@@ -1,6 +1,5 @@
 package com.github.yuonsa.commitgenius.services
 
-import ai.koog.prompt.llm.LLMProvider
 import com.github.yuonsa.commitgenius.settings.state.AppSettingState
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -36,7 +35,5 @@ class AppPersistentStateComponent : PersistentStateComponent<AppSettingState> {
         val instance: AppPersistentStateComponent
             get() = ApplicationManager.getApplication()
                 .getService(AppPersistentStateComponent::class.java)
-
-        fun supportedProviders() = listOf(LLMProvider.OpenAI, LLMProvider.Anthropic)
     }
 }

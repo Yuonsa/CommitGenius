@@ -1,6 +1,7 @@
 package com.github.yuonsa.commitgenius.core.notification
 
 import com.github.yuonsa.commitgenius.NotificationBundle
+import com.intellij.notification.Notification
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
@@ -51,12 +52,15 @@ object Notifier {
         notifyText(content, title, type, project)
     }
 
-    private fun notifyText(
+    fun notifyText(
         content: String,
         title: String? = null,
         type: NotificationType = NotificationType.INFORMATION,
         project: Project? = null,
+        block: (Notification.() -> Unit)? = null
     ) {
-        GROUP.createNotification(title ?: "", content, type).notify(project)
+        val notification = GROUP.createNotification(title ?: "", content, type)
+        block?.invoke(notification)
+        notification.notify(project)
     }
 }

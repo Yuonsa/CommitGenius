@@ -2,7 +2,7 @@ package com.github.yuonsa.commitgenius.settings
 
 import com.github.yuonsa.commitgenius.AppBundle
 import com.github.yuonsa.commitgenius.core.PromptBuilder
-import com.github.yuonsa.commitgenius.services.AppPersistentStateComponent
+import com.github.yuonsa.commitgenius.core.agent.LLMEngine
 import com.github.yuonsa.commitgenius.settings.binding.ComponentBinding
 import com.github.yuonsa.commitgenius.settings.binding.UIBinding
 import com.github.yuonsa.commitgenius.settings.dsl.settingLayout
@@ -35,9 +35,8 @@ object SettingFields {
         appProp = AppSettingState::provider,
         projProp = ProjectSettingState::provider,
         binding = ComponentBinding.comboBox(
-            AppPersistentStateComponent.supportedProviders().toTypedArray(),
-            { it.display }
-        )
+            LLMEngine.supportedProviders().toTypedArray()
+        ) { it.display }
     )
 
     val apiKey = createI18nField(
