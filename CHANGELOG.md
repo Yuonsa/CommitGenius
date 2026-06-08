@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-06-08
+
 ### Added
 
 - Support for local Ollama AI models — no API key required for offline usage
@@ -30,3 +32,7 @@
   全局配置和项目级配置分离，支持项目独立覆盖模型设置
 - Smart dependency lockfile filtering to automatically optimize token usage
   智能过滤依赖锁文件，自动优化 Token 消耗
+
+[Unreleased]: https://github.com/Yuonsa/CommitGenius/compare/0.0.2...HEAD
+[0.0.2]: https://github.com/Yuonsa/CommitGenius/compare/0.0.1...0.0.2
+[0.0.1]: https://github.com/Yuonsa/CommitGenius/commits/0.0.1
