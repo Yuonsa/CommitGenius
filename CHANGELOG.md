@@ -3,7 +3,11 @@
 # CommitGenius Changelog
 
 ## [Unreleased]
+
+## [0.0.1] - 2026-06-08
+
 ### Added
+
 - AI-powered Git commit message generation integrated into IDE's native Commit window
   智能生成 Git 提交信息，深度集成于 IDE 原生 Commit 窗口
 - Multi-model support (OpenAI, Anthropic) with customizable API endpoints and model IDs
@@ -16,3 +20,6 @@
   全局配置和项目级配置分离，支持项目独立覆盖模型设置
 - Smart dependency lockfile filtering to automatically optimize token usage
   智能过滤依赖锁文件，自动优化 Token 消耗
+
+[Unreleased]: https://github.com/Yuonsa/CommitGenius/compare/0.0.1...HEAD
+[0.0.1]: https://github.com/Yuonsa/CommitGenius/commits/0.0.1
