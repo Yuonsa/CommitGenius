@@ -3,7 +3,21 @@
 # CommitGenius Changelog
 
 ## [Unreleased]
+
 ### Added
+
+- Support for local Ollama AI models — no API key required for offline usage
+  支持本地 Ollama 模型，无需 API Key 即可离线使用
+
+### Changed
+
+- Smart error handling: automatically guides to settings when API key is missing
+  智能错误处理：API Key 未配置时自动引导至设置面板
+
+## [0.0.1] - 2026-06-05
+
+### Added
+
 - AI-powered Git commit message generation integrated into IDE's native Commit window
   智能生成 Git 提交信息，深度集成于 IDE 原生 Commit 窗口
 - Multi-model support (OpenAI, Anthropic) with customizable API endpoints and model IDs
