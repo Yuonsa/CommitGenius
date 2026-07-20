@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.changelog")
 }
 
-val koogVersion = "1.0.0"
+val koogVersion = "1.1.1"
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
